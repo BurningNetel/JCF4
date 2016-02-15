@@ -1,13 +1,14 @@
 package xyz.joepseuren;
 
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 public class Main {
 
-    private static String data = "bananen";
+    private static String data = "banenen";
     private static Map<Character, String> charCodeMap = new HashMap<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException {
         // 1 count the characters
         List<HuffNode> charList = countCharacters(data);
         // 2 sort the list
@@ -18,8 +19,20 @@ public class Main {
         walkTree(tree, "");
         // 5 encode
         String encoded = encodeMessage(charCodeMap);
-        // 6 decodeMessage
+        // 6 decode
         decodeMessage(encoded, tree);
+        // statistics
+        print_statistics(encoded);
+    }
+
+    private static void print_statistics(String encoded) {
+        int initialSize = data.length() * 8;
+        int compressedSize = encoded.length();
+        float ratio = (float) initialSize / compressedSize * 100;
+        System.out.println("Initial size: " + initialSize + " Bits");
+        System.out.println("Encoded message: " + encoded);
+        System.out.println("Compressed size: " + compressedSize + " Bits");
+        System.out.println("Compression rate: " + ratio + "%");
     }
 
     private static void decodeMessage(String S, HuffNode root)
@@ -33,7 +46,7 @@ public class Main {
                 c = root;
             }
         }
-        System.out.print(sb);
+        System.out.println("Result: " + sb);
     }
 
     private static String encodeMessage(Map<Character, String> charCodeMap) {
@@ -76,6 +89,7 @@ public class Main {
     }
 
     private static List<HuffNode> countCharacters(String data) {
+        System.out.println("Input: " + data);
         Map<Character, Integer> map = new HashMap<>();
 
         // O(n) counts characters, put them in a hash map

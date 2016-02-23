@@ -59,6 +59,7 @@ public class WoordenController implements Initializable {
     private void aantalAction(ActionEvent event) {
         String[] list = this.getInputAsArray();
         String text;
+
         text = "Totaal aantal woorden: " + String.valueOf(list.length) + "\n";
 
         Set<String> set = new HashSet<>(Arrays.asList(list));

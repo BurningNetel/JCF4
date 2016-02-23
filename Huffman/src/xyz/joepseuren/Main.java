@@ -14,7 +14,7 @@ public class Main {
         data = scanner.nextLine();
 
         // 1 count the characters
-        List<HuffNode> charList = countCharacters(data);
+        Set<HuffNode> charList = countCharacters(data);
         // 2 sort the list
         PriorityQueue<HuffNode> charQueue = sortCharNodeList(charList);
         // 3 create the tree
@@ -90,14 +90,14 @@ public class Main {
         return charQueue.poll();
     }
 
-    private static PriorityQueue<HuffNode> sortCharNodeList(List<HuffNode> charList) {
+    private static PriorityQueue<HuffNode> sortCharNodeList(Set<HuffNode> charList) {
         // O(n log n)
         PriorityQueue<HuffNode> queue = new PriorityQueue<>(charList.size(), Comparator.comparing(HuffNode::getCount));
         queue.addAll(charList);
         return queue;
     }
 
-    private static List<HuffNode> countCharacters(String data) {
+    private static Set<HuffNode> countCharacters(String data) {
         System.out.println("Input: " + data);
         Map<Character, Integer> map = new HashMap<>();
 
@@ -108,7 +108,7 @@ public class Main {
         }
 
         // Create objects because we have to use Collections sort method.
-        List<HuffNode> nodeList = new ArrayList<>();
+        Set<HuffNode> nodeList = new HashSet<>();
         map.forEach((character, count) -> nodeList.add(new HuffNode(character, count, null, null)));
 
         return nodeList;

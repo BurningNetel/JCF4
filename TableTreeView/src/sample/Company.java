@@ -9,12 +9,12 @@ import java.util.*;
  */
 public class Company extends Observable implements Observer {
     private String name;
-    private List<Department> departments;
+    private Set<Department> departments;
 
     public Company(String name)
     {
         this.name = name;
-        this.departments = new ArrayList<>();
+        this.departments = new HashSet<>();
     }
 
     public String getName() {
@@ -26,11 +26,11 @@ public class Company extends Observable implements Observer {
         push();
     }
 
-    public List<Department> getDepartments() {
+    public Set<Department> getDepartments() {
         return departments;
     }
 
-    public void setDepartments(List<Department> departments) {
+    public void setDepartments(HashSet<Department> departments) {
         this.departments = departments;
         departments.forEach(d -> d.addObserver(this));
         push();

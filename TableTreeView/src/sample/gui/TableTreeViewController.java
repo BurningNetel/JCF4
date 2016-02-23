@@ -1,31 +1,18 @@
 package sample.gui;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.text.Text;
-import javafx.util.Callback;
-import javafx.util.converter.DoubleStringConverter;
+import sample.DoubleFieldTableCellImpl;
 import sample.Company;
 import sample.Department;
 import sample.Employee;
 
 import java.net.URL;
-import java.security.Key;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
@@ -172,81 +159,5 @@ public class TableTreeViewController implements Initializable, Observer {
         updateTreeView();
     }
 
-    private final class DoubleFieldTableCellImpl extends TableCell<Employee, Double> {
-        private TextField textfield;
 
-        @Override
-        public void startEdit() {
-            super.startEdit();
-
-            if(textfield == null){
-                createTextField();
-            }
-
-            setText(null);
-            setGraphic(textfield);
-            textfield.selectAll();
-        }
-
-        @Override
-        protected void updateItem(Double item, boolean empty) {
-            super.updateItem(item, empty);
-
-            if(empty){
-                setText(null);
-                setGraphic(null);
-            } else {
-                if (isEditing()){
-                    if (textfield != null){
-                        textfield.setText(getString());
-                    }
-                    setText(null);
-                    setGraphic(textfield);
-                } else {
-                    setText(getString());
-                    setGraphic(getTableColumn().getGraphic());
-                }
-            }
-        }
-
-        private String getString() {
-            return getItem() == null ? "" : getItem().toString();
-        }
-
-        @Override
-        public void cancelEdit() {
-            super.cancelEdit();
-            setText(getItem().toString());
-            setGraphic(getTableColumn().getGraphic());
-        }
-
-        @Override
-        public void commitEdit(Double newValue) {
-            super.commitEdit(newValue);
-            ((Employee) getTableRow().getItem()).setSalary(newValue);
-        }
-
-        private void createTextField() {
-            textfield = new TextField(getText());
-            textfield.setOnKeyReleased(t -> {
-                if (t.getCode() == KeyCode.ENTER){
-                    Double result;
-                    try {
-                        result = Double.valueOf(textfield.getText());
-                    } catch (NumberFormatException e) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setContentText("Please fill in a double! Ex: 1.20");
-                        alert.showAndWait();
-                        return;
-                    }
-                    commitEdit(result);
-
-                }
-                else if (t.getCode() == KeyCode.ESCAPE)
-                {
-                    cancelEdit();
-                }
-            });
-        }
-    }
 }

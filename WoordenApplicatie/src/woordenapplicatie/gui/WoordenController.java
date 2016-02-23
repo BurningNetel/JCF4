@@ -10,10 +10,6 @@ package woordenapplicatie.gui;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -51,19 +47,22 @@ public class WoordenController implements Initializable {
         taInput.setText(DEFAULT_TEXT);
     }
 
-    private List<String> getInputAsList(){
-        return Arrays.asList(taInput.getText().replaceAll(",","").replaceAll("\n"," ").toLowerCase().split("\\s"));
+    /**
+     * Removes ',' and newlines, lowers and finally splits the input text into an string array.
+     * @return
+     */
+    private String[] getInputAsArray(){
+        return taInput.getText().replace(",","").replace("\n"," ").toLowerCase().split("\\s");
     }
 
     @FXML
     private void aantalAction(ActionEvent event) {
-        List<String> list = this.getInputAsList();
-        list.forEach(s -> s = s.trim());
+        String[] list = this.getInputAsArray();
         String text;
-        text = "Totaal aantal woorden: " + String.valueOf(list.size()) + "\n";
+        text = "Totaal aantal woorden: " + String.valueOf(list.length) + "\n";
 
-        Set<String> set = new HashSet<>(list);
-        set.forEach(System.out::println);
+        Set<String> set = new HashSet<>(Arrays.asList(list));
+
         text += "Aantal verschillende woorden: " + set.size() + "\n";
 
         taOutput.setText(text);
@@ -71,61 +70,63 @@ public class WoordenController implements Initializable {
 
     @FXML
     private void sorteerAction(ActionEvent event) {
-        List<String> list = this.getInputAsList();
+        String[] list = this.getInputAsArray();
 
         // Filter unique
-        Set<String> set = new HashSet<>(list);
-        list = new ArrayList<>(set);
-
-        // Sort alphabetically
-        list.sort(String::compareTo);
-
-        // Reverse the order
-        Collections.reverse(list);
+        TreeSet<String> set = new TreeSet<>(Arrays.asList(list));
 
         taOutput.clear();
-        list.forEach(s -> taOutput.appendText(s + "\n"));
+        // Reverse the order
+        set.descendingSet().forEach(s -> taOutput.appendText(s + "\n"));
     }
 
     @FXML
     private void frequentieAction(ActionEvent event) {
-        List<String> list = this.getInputAsList();
+        String[] list = this.getInputAsArray();
 
         Map<String, Integer> wordCountMap = new HashMap<>();
 
-        // Put in a new key, or increment the existing value by 1 if the key exists.
-        list.forEach(s -> wordCountMap.put(s, wordCountMap.containsKey(s) ? wordCountMap.get(s) + 1 : 1));
+        // Put in a new key, or increment the existing value by 1 if the key exists
+        // O(n)
+        for (String s : list) {
+            wordCountMap.put(s, wordCountMap.containsKey(s) ? wordCountMap.get(s) + 1 : 1);
+        }
 
         taOutput.clear();
+
         // Sort the map by value using java 8 stream and print it to the output box
+        // O(n log n) + O(n) = O(n + n log(n))
         wordCountMap.entrySet().stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue())
                 .forEach(entry -> taOutput.appendText(entry.getKey() + ": " + entry.getValue() + "\n"));
+
     }
 
     @FXML
     private void concordatieAction(ActionEvent event) {
-        List<String> words = this.getInputAsList();
-        Set<String> wordsSet = new HashSet<>(words);
+        String[] words = this.getInputAsArray();
 
-        List<String> rows = Arrays.asList(taInput.getText().replaceAll(",","").toLowerCase().split("\n"));
+        Set<String> wordsSet = new HashSet<>(Arrays.asList(words));
 
-        Map<String, ArrayList<Integer>> wordLocation = new HashMap<>();
+        // rows
+        LinkedList<String> rowList = new LinkedList<>(Arrays.asList(taInput.getText().replaceAll(",","").toLowerCase().split("\n")));
 
+        Map<String, HashSet<Integer>> wordLocation = new HashMap<>();
+
+        // O(n2)
         for (String word : wordsSet) {
-            int length = rows.size();
-
             // Loop trough each row and update the map accordingly
-            for (int rowNum = 0; rowNum < length; rowNum++)
-            {
-                int count = rowNum + 1;
+            int rowcount = 0;
+
+            for (int row = 0; row < rowList.size(); row++) {
+                int count = ++rowcount;
 
                 // Adds the rows location to the array if the word is in the row
-                if (rows.get(rowNum).contains(word)) {
+                if (rowList.get(row).contains(word)) {
                     if (wordLocation.get(word) != null) {
                         wordLocation.get(word).add(count);
                      } else {
-                        wordLocation.put(word, new ArrayList<>(Arrays.asList(count)));
+                        wordLocation.put(word, new HashSet<>(Arrays.asList(count)));
                     }
                 }
             }
@@ -134,6 +135,7 @@ public class WoordenController implements Initializable {
         taOutput.clear();
         // Print to output
         wordLocation.entrySet().stream().forEach(entry -> taOutput.appendText(entry.getKey() + ": " + entry.getValue().toString() + "\n"));
+
     }
    
 }

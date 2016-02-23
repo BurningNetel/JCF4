@@ -9,6 +9,10 @@ public class Main {
     private static Map<Character, String> charCodeMap = new HashMap<>();
 
     public static void main(String[] args) throws UnsupportedEncodingException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter data: ");
+        data = scanner.nextLine();
+
         // 1 count the characters
         List<HuffNode> charList = countCharacters(data);
         // 2 sort the list
@@ -37,6 +41,7 @@ public class Main {
 
     private static void decodeMessage(String S, HuffNode root)
     {
+        // O(n)
         StringBuilder sb = new StringBuilder();
         HuffNode c = root;
         for (int i = 0; i < S.length(); i++) {
@@ -50,6 +55,7 @@ public class Main {
     }
 
     private static String encodeMessage(Map<Character, String> charCodeMap) {
+        // O(n)
         StringBuilder sb = new StringBuilder();
         for (Character c : data.toCharArray()) {
             sb.append(charCodeMap.get(c));
@@ -59,6 +65,7 @@ public class Main {
 
     private static void walkTree(HuffNode tree, String code)
     {
+        // O(n)
         if (tree != null)
         {
             walkTree(tree.getLeft(), code + '0');
@@ -71,6 +78,7 @@ public class Main {
     }
 
     private static HuffNode createTree(PriorityQueue<HuffNode> charQueue) {
+        // O(n)
         while(charQueue.size() > 1)
         {
             HuffNode left = charQueue.poll();
@@ -83,6 +91,7 @@ public class Main {
     }
 
     private static PriorityQueue<HuffNode> sortCharNodeList(List<HuffNode> charList) {
+        // O(n log n)
         PriorityQueue<HuffNode> queue = new PriorityQueue<>(charList.size(), Comparator.comparing(HuffNode::getCount));
         queue.addAll(charList);
         return queue;

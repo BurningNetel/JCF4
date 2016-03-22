@@ -38,4 +38,32 @@ public class HuffNode {
     public HuffNode getRight() {
         return right;
     }
+
+    public void decode(StringBuilder sb, String encodedMessage) {
+        while(encodedMessage.length() != 0)
+        {
+            encodedMessage = leftOrRight(sb, encodedMessage);
+        }
+    }
+
+    private String decodeNode(StringBuilder sb, String encodedMessage){
+        // If it is a leaf. append char to stringbuilder
+        if (getLeft() == null && getRight() == null) {
+            sb.append(character);
+        } else {
+            encodedMessage = leftOrRight(sb, encodedMessage);
+        }
+        return encodedMessage;
+    }
+
+    private String leftOrRight(StringBuilder sb, String encodedMessage) {
+        if (encodedMessage.charAt(0) == '1') {
+            encodedMessage = encodedMessage.substring(1);
+            encodedMessage = this.getRight().decodeNode(sb, encodedMessage);
+        } else {
+            encodedMessage = encodedMessage.substring(1);
+            encodedMessage = this.getLeft().decodeNode(sb, encodedMessage);
+        }
+        return encodedMessage;
+    }
 }

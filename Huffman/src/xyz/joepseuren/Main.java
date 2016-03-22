@@ -24,7 +24,10 @@ public class Main {
         // 5 encode
         String encoded = encodeMessage(charCodeMap);
         // 6 decode
-        decodeMessage(encoded, tree);
+        StringBuilder sb = new StringBuilder();
+        tree.decode(sb, encoded);
+        System.out.println("Output: " + sb);
+        //decodeMessage(encoded, tree);
         // statistics
         print_statistics(encoded);
     }
@@ -42,6 +45,7 @@ public class Main {
     private static void decodeMessage(String S, HuffNode root)
     {
         // O(n)
+        // TODO: Testen op canvas implementeren
         StringBuilder sb = new StringBuilder();
         HuffNode c = root;
         for (int i = 0; i < S.length(); i++) {

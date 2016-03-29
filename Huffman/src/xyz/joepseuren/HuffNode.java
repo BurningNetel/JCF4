@@ -2,14 +2,12 @@ package xyz.joepseuren;
 
 /**
  * Created by joep on 2/14/16.
- *
  */
-public class HuffNode {
+public class HuffNode implements Comparable<HuffNode>{
 
     private int count;
     private char character;
     private HuffNode left, right;
-    private String code;
 
     public HuffNode(char character, int count, HuffNode left, HuffNode right){
         this.character = character;
@@ -46,6 +44,12 @@ public class HuffNode {
         }
     }
 
+    /**
+     * Decodes the node and appends the chars to the stringbuilder
+     * @param sb Stringbuilder that will contain the output after the call of this function
+     * @param encodedMessage The bytestring for this tree
+     * @return message
+     */
     private String decodeNode(StringBuilder sb, String encodedMessage){
         // If it is a leaf. append char to stringbuilder
         if (getLeft() == null && getRight() == null) {
@@ -65,5 +69,23 @@ public class HuffNode {
             encodedMessage = this.getLeft().decodeNode(sb, encodedMessage);
         }
         return encodedMessage;
+    }
+
+    public int compareIfEquals(HuffNode other){
+        if(getCharacter() == '\0'){
+            return 1;
+        } else {
+           return Character.compare(getCharacter(), other.getCharacter());
+        }
+    }
+
+    @Override
+    public int compareTo(HuffNode other) {
+        int comp = Integer.compare(count, other.getCount());
+
+        if (comp == 0)
+            return compareIfEquals(other);
+
+        return comp;
     }
 }
